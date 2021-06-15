@@ -4,7 +4,7 @@ const About = () => {
     return (
         <>
             <Head>
-                <title>Bank Search | About</title>
+                <title>Bank Search App | About</title>
                 <meta name="keywords" content="banks" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>

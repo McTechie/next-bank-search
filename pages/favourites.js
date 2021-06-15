@@ -15,7 +15,7 @@ const Favourties = () => {
     return (
         <>
             <Head>
-                <title>Bank Search | Favourites</title>
+                <title>Bank Search App | Favourites</title>
                 <meta name="keywords" content="banks" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>

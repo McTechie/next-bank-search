@@ -1,6 +1,6 @@
 import Head from "next/head"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 // Fetching data in Next.js Apps
 export const getStaticProps = async () => {
@@ -13,21 +13,21 @@ export const getStaticProps = async () => {
     }
 }
 
-// Implement Custom Pagination with useState(prev and next) and current items listing
-
 const Banks = ({ banks, items }) => {
+
+    const [searchName, setSearchName] = useState('');
+    const [searchIfsc, setSearchIfsc] = useState('');
     
     // Custom Pagination
     const [count, setCount] = useState(0);
     const [size, setSize] = useState(10);
-    const [newBanks, setNewBanks] = useState(banks.slice(count, count + size));
     
     const handleStart = () => {
         setCount(0);
     }
 
     const handleEnd = () => {
-        setCount(items - size);
+        setCount(banks.filter(bank => (bank.bank_name.toLowerCase().includes(searchName.toLowerCase()) || bank.ifsc.includes(searchIfsc))).length - size);
     }
     
     const handlePrev = () => {
@@ -47,17 +47,14 @@ const Banks = ({ banks, items }) => {
     }
 
     const handleSearch = (e) => {
-        if (e.target.value === '' || e.target.value === ' ') {
-            window.location.reload();
-        } else {
-            setNewBanks(banks.filter((bank) => (bank.bank_name.toLowerCase().includes(e.target.value.toLowerCase()) || bank.ifsc.includes(e.target.value))));
-        }
+        setSearchName(e.target.value);
+        setSearchIfsc(e.target.value);
     }
 
     return (
         <>
             <Head>
-                <title>Bank Search | Listings</title>
+                <title>Bank Search App | Listings</title>
                 <meta name="keywords" content="banks" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
@@ -83,7 +80,7 @@ const Banks = ({ banks, items }) => {
                 <a aria-label="button" className="pagination-btn" onClick={handleNext}>Next</a>
                 <a aria-label="button" className="pagination-btn" onClick={handleEnd}>End</a>
             </div>
-            {newBanks.map(bank => {
+            {banks.filter(bank => (bank.bank_name.toLowerCase().includes(searchName.toLowerCase()) || bank.ifsc.includes(searchIfsc))).slice(count, count + size).map(bank => {
                 return (
                     <Link href={'/banks/' + bank.ifsc} key={bank.ifsc}>
                         <a className="single">
