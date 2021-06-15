@@ -6,17 +6,16 @@ import { useState, useEffect } from "react"
 export const getStaticProps = async () => {
     const res = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=MUMBAI');
     const data = await res.json();
-    const items = data.length;
 
     return {
-        props: { banks: data, items }
+        props: { banks: data }
     }
 }
 
-const Banks = ({ banks, items }) => {
+const Banks = ({ banks }) => {
 
-    const [searchName, setSearchName] = useState('');
-    const [searchIfsc, setSearchIfsc] = useState('');
+    const [search, setSearch] = useState('');
+    const [end, setEnd] = useState(false)
     
     // Custom Pagination
     const [count, setCount] = useState(0);
@@ -25,30 +24,27 @@ const Banks = ({ banks, items }) => {
     const handleStart = () => {
         setCount(0);
     }
-
+    
     const handleEnd = () => {
-        setCount(banks.filter(bank => (bank.bank_name.toLowerCase().includes(searchName.toLowerCase()) || bank.ifsc.includes(searchIfsc))).length - size);
+        setEnd(true);
+        setCount(banks.filter(bank => (bank.bank_name.toLowerCase().includes(search.toLowerCase()) || bank.ifsc.includes(search) || bank.district.toLowerCase().includes(search.toLowerCase()) || bank.branch.toLowerCase().includes(search.toLowerCase()))).length - size);
     }
     
     const handlePrev = () => {
         if (count === 0) {
-            setCount(0);
+            handleEnd();
         } else {
             setCount(count => count - size);
         }
     }
-
+    
     const handleNext = () => {
-        if (count > items) {
+        if (end) {
+            setEnd(false);
             setCount(0);
         } else {
             setCount(count => count + size);
         }
-    }
-
-    const handleSearch = (e) => {
-        setSearchName(e.target.value);
-        setSearchIfsc(e.target.value);
     }
 
     return (
@@ -61,7 +57,7 @@ const Banks = ({ banks, items }) => {
             <div className="searchbar">
                 <div>
                     <label htmlFor="pageSize">No. of banks per page: </label>
-                    <select id="pageSize" name="pageSize" onChange={(e) => setSize(e.target.value)}>
+                    <select id="pageSize" name="pageSize" onChange={(e) => { console.log(e.target.value); setSize(e.target.value)}}>
                         <option value="10">10</option>
                         <option value="20">20</option>
                         <option value="50">50</option>
@@ -70,7 +66,7 @@ const Banks = ({ banks, items }) => {
                 </div>
                 <div>
                     <label htmlFor="bankSearch">Search for a Bank: </label>
-                    <input type="text" name="bankSearch" placeholder="Enter Bank Name or IFSC" onChange={handleSearch} />
+                    <input type="text" name="bankSearch" placeholder="Enter Bank Name or IFSC" onChange={(e) => { setSearch(e.target.value) }} />
                 </div>
             </div>
             <h1 style={{ "textAlign": "center" }}>All Banks</h1>
@@ -80,11 +76,11 @@ const Banks = ({ banks, items }) => {
                 <a aria-label="button" className="pagination-btn" onClick={handleNext}>Next</a>
                 <a aria-label="button" className="pagination-btn" onClick={handleEnd}>End</a>
             </div>
-            {banks.filter(bank => (bank.bank_name.toLowerCase().includes(searchName.toLowerCase()) || bank.ifsc.includes(searchIfsc))).slice(count, count + size).map(bank => {
+            {banks.filter(bank => (bank.bank_name.toLowerCase().includes(search.toLowerCase()) || bank.ifsc.includes(search) || bank.district.toLowerCase().includes(search.toLowerCase()) || bank.branch.toLowerCase().includes(search.toLowerCase()))).slice(count, count + size).map(bank => {
                 return (
                     <Link href={'/banks/' + bank.ifsc} key={bank.ifsc}>
                         <a className="single">
-                            <h3>{bank.bank_name} ({bank.branch})</h3>
+                            <h3>{bank.bank_name} -- <span className="branch">({bank.branch})</span></h3>
                         </a>
                     </Link>
                 )

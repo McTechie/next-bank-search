@@ -119,6 +119,11 @@ footer {
 
 .text {
   color: #777;
+  text-align: justify;
+}
+
+.branch {
+  font-weight: 600;
 }
 
 label {
