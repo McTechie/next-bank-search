@@ -8,7 +8,11 @@ const Favourties = () => {
     const [searchIfsc, setSearchIfsc] = useState('');
 
     // Accessing Browser's Local Storage
-    const localFav = JSON.parse(localStorage.getItem("banks") || "[]");
+    const [localFav, setLocalFav] = useState([]);
+
+    useEffect(() => {
+        setLocalFav(JSON.parse(localStorage.getItem("banks") || "[]"));
+    }, [])
 
     return (
         <>
@@ -28,7 +32,7 @@ const Favourties = () => {
                 return (
                     <Link href={'/banks/' + bank.ifsc} key={bank.ifsc}>
                         <a className="single">
-                            <h3>{bank.bank_name} ({bank.branch})</h3>
+                            <h3>{bank.bank_name} -- <span className="branch">({bank.branch})</span></h3>
                         </a>
                     </Link>
                 )
