@@ -1,31 +1,23 @@
 import Head from "next/head"
 
-// Fetching the number of route params required on the page
-export const getStaticPaths = async () => {
-    const res = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=MUMBAI');
-    const data = await res.json();
+export const getServerSideProps = async ({ params }) => {
+    const resMum = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=MUMBAI');
+    const dataMum = await resMum.json();
+    const resThane = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=THANE');
+    const dataThane = await resThane.json();
+    const resDelhi = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=DELHI');
+    const dataDelhi = await resDelhi.json();
+    const resBang = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=BANGALORE');
+    const dataBang = await resBang.json();
+    const resKol = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=KOLKATA');
+    const dataKol = await resKol.json();
 
-    const paths = data.map(bank => {
-        return {
-            params: { ifsc: bank.ifsc.toString() }
-        }
-    });
+    const data = dataMum.concat(dataThane).concat(dataDelhi).concat(dataBang).concat(dataKol);
 
-    // The paths property is utilized to know the number of HTML pages to be generated
-    return {
-        paths,
-        fallback: false
-    }
-}
-
-// Fetching data for each individual route
-export const getStaticProps = async (context) => {
-    const ifsc = context.params.ifsc;
-    const res = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=MUMBAI');
-    const data = await res.json();
     let reqdBank;
+
     data.every(bank => {
-        if (bank.ifsc === ifsc) {
+        if (bank.ifsc === params.ifsc) {
             reqdBank = bank;
             return false;
         }

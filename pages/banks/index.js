@@ -4,22 +4,45 @@ import { useState, useEffect } from "react"
 
 // Fetching data in Next.js Apps
 export const getStaticProps = async () => {
-    const res = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=MUMBAI');
-    const data = await res.json();
+    const resMum = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=MUMBAI');
+    const dataMum = await resMum.json();
+    const resThane = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=THANE');
+    const dataThane = await resThane.json();
+    const resDelhi = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=DELHI');
+    const dataDelhi = await resDelhi.json();
+    const resBang = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=BANGALORE');
+    const dataBang = await resBang.json();
+    const resKol = await fetch('https://vast-shore-74260.herokuapp.com/banks?city=KOLKATA');
+    const dataKol = await resKol.json();
 
     return {
-        props: { banks: data }
+        props: { banksMum: dataMum, banksThane: dataThane, banksDelhi: dataDelhi, banksBang: dataBang, banksKol: dataKol }
     }
 }
 
-const Banks = ({ banks }) => {
+const Banks = ({ banksMum, banksThane, banksDelhi, banksBang, banksKol }) => {
 
     const [search, setSearch] = useState('');
-    const [end, setEnd] = useState(false)
+    const [end, setEnd] = useState(false);
+    const [banks, setBanks] = useState(banksMum);
+
+    const handleCity = (e) => {
+        if (e.target.value === 'THANE') {
+            setBanks(banksThane);
+        } else if (e.target.value === 'DELHI') {
+            setBanks(banksDelhi);
+        } else if (e.target.value === 'BANGALORE') {
+            setBanks(banksBang);
+        } else if (e.target.value === 'KOLKATA') {
+            setBanks(banksKol);
+        } else {
+            setBanks(banksMum);
+        }
+    }
     
     // Custom Pagination
     const [count, setCount] = useState(0);
-    const [size, setSize] = useState(10);
+    const size = 20;
     
     const handleStart = () => {
         setCount(0);
@@ -56,12 +79,13 @@ const Banks = ({ banks }) => {
             </Head>
             <div className="searchbar">
                 <div>
-                    <label htmlFor="pageSize">No. of banks per page: </label>
-                    <select id="pageSize" name="pageSize" onChange={(e) => { console.log(e.target.value); setSize(e.target.value)}}>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
+                    <label htmlFor="pageSize">Select Your City: </label>
+                    <select id="pageSize" name="pageSize" onChange={handleCity}>
+                        <option value="MUMBAI">Mumbai</option>
+                        <option value="THANE">Thane</option>
+                        <option value="DELHI">Delhi</option>
+                        <option value="BANGALORE">Bangalore</option>
+                        <option value="KOLKATA">Kolkata</option>
                     </select>
                 </div>
                 <div>
