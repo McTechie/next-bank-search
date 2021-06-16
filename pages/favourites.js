@@ -12,7 +12,8 @@ const Favourties = () => {
 
     useEffect(() => {
         setLocalFav(JSON.parse(localStorage.getItem("banks") || "[]"));
-    }, [])
+        console.log(localFav);
+    }, []);
 
     return (
         <>
@@ -28,7 +29,13 @@ const Favourties = () => {
                 </div>
             </div>
             <h1 style={{ "textAlign": "center" }}>Your Favourites</h1>
-            {localFav.filter(bank => bank.bank_name.toLowerCase().includes(searchName.toLowerCase()) || bank.ifsc.includes(searchIfsc)).map(bank => {
+            {(localFav.length === 0) && (
+                <div style={{ "color": "#777", "textAlign": "center" }}>
+                    <div>You have no favourites yet :&#40;</div> <br />
+                    <div>Check out our Bank listings and possibly add one to your favourties!</div>
+                </div>
+            )}
+            {(localFav.length !== 0) && localFav.filter(bank => bank.bank_name.toLowerCase().includes(searchName.toLowerCase()) || bank.ifsc.includes(searchIfsc)).map(bank => {
                 return (
                     <Link href={'/banks/' + bank.ifsc} key={bank.ifsc}>
                         <a className="single">
